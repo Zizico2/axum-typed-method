@@ -71,3 +71,4 @@ pub mod router_ext {
         const METHOD: MethodFilter;
     }
 }
+pub use router_ext::{RouterExt, TypedMethod};
