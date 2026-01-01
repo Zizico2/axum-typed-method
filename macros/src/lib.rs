@@ -124,6 +124,12 @@ mod typed_method {
             while !input.is_empty() {
                 let lh = input.lookahead1();
                 if lh.peek(LitStr) {
+                    if method_filter.is_some() {
+                        return Err(syn::Error::new(
+                            input.span(),
+                            "method filter specified more than once",
+                        ));
+                    }
                     let lit: LitStr = input.parse()?;
                     // Parse the string content as a path
                     method_filter = Some(lit.parse().map_err(|e| {
@@ -133,6 +139,12 @@ mod typed_method {
                         )
                     })?);
                 } else if lh.peek(Ident) {
+                    if method_filter.is_some() {
+                        return Err(syn::Error::new(
+                            input.span(),
+                            "method filter specified more than once",
+                        ));
+                    }
                     method_filter = Some(input.parse()?);
                 } else if lh.peek(kw::rejection) {
                     parse_parenthesized_attribute(input, &mut rejection)?;
