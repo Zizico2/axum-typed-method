@@ -126,7 +126,12 @@ mod typed_method {
                 if lh.peek(LitStr) {
                     let lit: LitStr = input.parse()?;
                     // Parse the string content as a path
-                    method_filter = Some(lit.parse()?);
+                    method_filter = Some(lit.parse().map_err(|e| {
+                        syn::Error::new(
+                            lit.span(),
+                            format!("invalid path in string literal: {}", e),
+                        )
+                    })?);
                 } else if lh.peek(Ident) {
                     method_filter = Some(input.parse()?);
                 } else if lh.peek(kw::rejection) {
