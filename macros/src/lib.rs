@@ -7,6 +7,25 @@ mod attr_parsing;
 
 /// Derive an implementation of [`axum_extra::routing::TypedPath`].
 ///
+/// The `typed_method` attribute accepts either a string literal or a path
+/// to specify the HTTP method filter.
+///
+/// # Examples
+///
+/// Using a path (identifier or qualified path):
+/// ```ignore
+/// #[derive(TypedMethod)]
+/// #[typed_method(MethodFilter::GET)]
+/// struct MyRoute;
+/// ```
+///
+/// Using a string literal:
+/// ```ignore
+/// #[derive(TypedMethod)]
+/// #[typed_method("GET")]
+/// struct MyRoute;
+/// ```
+///
 /// See that trait for more details.
 ///
 /// [`axum_extra::routing::TypedPath`]: https://docs.rs/axum-extra/latest/axum_extra/routing/trait.TypedPath.html
