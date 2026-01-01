@@ -1,0 +1,9 @@
+[package]
+name = "axum-typed-method-examples"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { workspace = true }
+axum-typed-method = { version = "0.1.0", path = "../axum-typed-method" }
+macros = { version = "0.1.0", path = "../macros" }

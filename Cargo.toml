@@ -1,6 +1,18 @@
-[package]
-name = "axum-typed-method"
-version = "0.1.0"
-edition = "2024"
+# [package]
+# name = "axum-typed-method"
+# version = "0.1.0"
+# edition = "2024"
 
-[dependencies]
+
+
+
+[workspace]
+resolver = "2"
+members = [
+    "axum-typed-method", "examples", "macros",
+    # // "axum-typed-method-macros",
+]
+
+[workspace.dependencies]
+axum = "0.8.8"
+axum-extra = { version = "0.12.5", features = ["typed-routing"] }
