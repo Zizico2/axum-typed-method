@@ -43,7 +43,7 @@ where
 mod typed_method {
     use proc_macro2::{Span, TokenStream};
     use quote::{quote, quote_spanned};
-    use syn::{ItemStruct, Token, parse::Parse, spanned::Spanned};
+    use syn::{ItemStruct, parse::Parse, spanned::Spanned};
 
     use super::attr_parsing::Combine;
 
@@ -53,7 +53,6 @@ mod typed_method {
             attrs,
             ident,
             generics,
-            fields,
             ..
         } = &item_struct;
 
