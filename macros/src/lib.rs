@@ -94,25 +94,27 @@ mod typed_method {
 
     impl Parse for Attrs {
         fn parse(input: syn::parse::ParseStream<'_>) -> syn::Result<Self> {
-            let mut method_filter = None;
+            // let method_filter = ;
 
-            while !input.is_empty() {
-                let lh = input.lookahead1();
-                if input.peek(Token![crate])
-                    || input.peek(Token![self])
-                    || input.peek(Token![super])
-                    || input.peek(Token![::])
-                    || input.peek(syn::Ident)
-                {
-                    method_filter = Some(input.parse()?);
-                } else {
-                    return Err(lh.error());
-                }
+            // while !input.is_empty() {
+            //     let lh = input.lookahead1();
+            //     if input.peek(Token![crate])
+            //         || input.peek(Token![self])
+            //         || input.peek(Token![super])
+            //         || input.peek(Token![::])
+            //         || input.peek(syn::Ident)
+            //     {
+            //         method_filter = Some(input.parse()?);
+            //     } else {
+            //         return Err(lh.error());
+            //     }
 
-                let _ = input.parse::<Token![,]>();
-            }
+            //     let _ = input.parse::<Token![,]>();
+            // }
 
-            Ok(Self { method_filter })
+            Ok(Self {
+                method_filter: Some(input.parse()?),
+            })
         }
     }
 
