@@ -43,7 +43,7 @@ where
 mod typed_method {
     use proc_macro2::{Span, TokenStream};
     use quote::{format_ident, quote, quote_spanned};
-    use syn::{ItemStruct, LitStr, Token, parse::Parse, spanned::Spanned};
+    use syn::{Ident, ItemStruct, LitStr, Token, parse::Parse, spanned::Spanned};
 
     use super::attr_parsing::{Combine, combine_attribute, parse_parenthesized_attribute, second};
 
@@ -104,8 +104,9 @@ mod typed_method {
 
             while !input.is_empty() {
                 let lh = input.lookahead1();
-                // TODO: peek for syn::Path
                 if lh.peek(LitStr) {
+                    method_filter = Some(input.parse()?);
+                } else if lh.peek(Ident) {
                     method_filter = Some(input.parse()?);
                 } else if lh.peek(kw::rejection) {
                     parse_parenthesized_attribute(input, &mut rejection)?;
