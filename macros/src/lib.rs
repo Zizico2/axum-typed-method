@@ -7,6 +7,25 @@ mod attr_parsing;
 
 /// Derive an implementation of [`axum_extra::routing::TypedPath`].
 ///
+/// The `typed_method` attribute accepts either a string literal or a path
+/// to specify the HTTP method filter.
+///
+/// # Examples
+///
+/// Using a path (identifier or qualified path):
+/// ```ignore
+/// #[derive(TypedMethod)]
+/// #[typed_method(MethodFilter::GET)]
+/// struct MyRoute;
+/// ```
+///
+/// Using a string literal:
+/// ```ignore
+/// #[derive(TypedMethod)]
+/// #[typed_method("GET")]
+/// struct MyRoute;
+/// ```
+///
 /// See that trait for more details.
 ///
 /// [`axum_extra::routing::TypedPath`]: https://docs.rs/axum-extra/latest/axum_extra/routing/trait.TypedPath.html
@@ -43,7 +62,7 @@ where
 mod typed_method {
     use proc_macro2::{Span, TokenStream};
     use quote::{format_ident, quote, quote_spanned};
-    use syn::{ItemStruct, LitStr, Token, parse::Parse, spanned::Spanned};
+    use syn::{Ident, ItemStruct, LitStr, Token, parse::Parse, spanned::Spanned};
 
     use super::attr_parsing::{Combine, combine_attribute, parse_parenthesized_attribute, second};
 
@@ -72,7 +91,7 @@ mod typed_method {
         let method_filter = method_filter.ok_or_else(|| {
             syn::Error::new(
                 Span::call_site(),
-                "Missing method filter: `#[typed_method(\"GET\")]`",
+                "Missing method filter: `#[typed_method(\"GET\")]` or `#[typed_method(GET)]`",
             )
         })?;
 
@@ -105,6 +124,27 @@ mod typed_method {
             while !input.is_empty() {
                 let lh = input.lookahead1();
                 if lh.peek(LitStr) {
+                    if method_filter.is_some() {
+                        return Err(syn::Error::new(
+                            input.span(),
+                            "method filter specified more than once",
+                        ));
+                    }
+                    let lit: LitStr = input.parse()?;
+                    // Parse the string content as a path
+                    method_filter = Some(lit.parse().map_err(|e| {
+                        syn::Error::new(
+                            lit.span(),
+                            format!("invalid path in string literal: {}", e),
+                        )
+                    })?);
+                } else if lh.peek(Ident) {
+                    if method_filter.is_some() {
+                        return Err(syn::Error::new(
+                            input.span(),
+                            "method filter specified more than once",
+                        ));
+                    }
                     method_filter = Some(input.parse()?);
                 } else if lh.peek(kw::rejection) {
                     parse_parenthesized_attribute(input, &mut rejection)?;
