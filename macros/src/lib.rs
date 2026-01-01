@@ -91,7 +91,7 @@ mod typed_method {
         let method_filter = method_filter.ok_or_else(|| {
             syn::Error::new(
                 Span::call_site(),
-                "Missing method filter: `#[typed_method(\"GET\")]`",
+                "Missing method filter: `#[typed_method(\"GET\")]` or `#[typed_method(GET)]`",
             )
         })?;
 
@@ -124,7 +124,9 @@ mod typed_method {
             while !input.is_empty() {
                 let lh = input.lookahead1();
                 if lh.peek(LitStr) {
-                    method_filter = Some(input.parse()?);
+                    let lit: LitStr = input.parse()?;
+                    // Parse the string content as a path
+                    method_filter = Some(lit.parse()?);
                 } else if lh.peek(Ident) {
                     method_filter = Some(input.parse()?);
                 } else if lh.peek(kw::rejection) {
