@@ -104,6 +104,7 @@ mod typed_method {
 
             while !input.is_empty() {
                 let lh = input.lookahead1();
+                // TODO: peek for syn::Path
                 if lh.peek(LitStr) {
                     method_filter = Some(input.parse()?);
                 } else if lh.peek(kw::rejection) {
